@@ -8,18 +8,19 @@ import '../services/auth_service.dart';
 
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
-final authStateProvider = StreamProvider<User?>((ref) {
+final authStateProvider = StreamProvider.autoDispose<User?>((ref) {
   return ref.watch(authServiceProvider).authStateChanges;
 });
 
-final currentUserProvider = FutureProvider<UserModel?>((ref) async {
+final currentUserProvider = FutureProvider.autoDispose<UserModel?>((ref) async {
   final user = ref.watch(authStateProvider).value;
   if (user == null) return null;
   return ref.read(authServiceProvider).getUserProfile(user.uid);
 });
 
-// Controls whether to show the mock verify screen after registration
-final needsVerificationProvider = StateProvider<bool>((ref) => false);
+// Controls whether to show the verify screen after registration
+final needsVerificationProvider =
+    StateProvider.autoDispose<bool>((ref) => false);
 
 class AuthNotifier extends StateNotifier<AsyncValue<void>> {
   final AuthService _svc;
@@ -51,6 +52,8 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _svc.signIn(email: email, password: password);
+      // Ensure we don't ask for verification on login
+      _ref.read(needsVerificationProvider.notifier).state = false;
       state = const AsyncValue.data(null);
     } catch (e, st) {
       state = AsyncValue.error(e, st);

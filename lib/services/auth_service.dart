@@ -32,10 +32,6 @@ class AuthService {
           .doc(cred.user!.uid)
           .set(model.toMap(), SetOptions(merge: true));
 
-      if (!cred.user!.emailVerified) {
-        await cred.user!.sendEmailVerification();
-      }
-
       return model;
     } on FirebaseAuthException catch (e) {
       debugPrint('🔴 signUp: ${e.code}');
@@ -55,11 +51,6 @@ class AuthService {
         email: email.trim(),
         password: password,
       );
-      if (!cred.user!.emailVerified) {
-        await cred.user!.sendEmailVerification();
-        await _auth.signOut();
-        throw 'Email is not verified. Please check your inbox and verify your email address.';
-      }
       return cred.user!;
     } on FirebaseAuthException catch (e) {
       debugPrint('🔴 signIn: ${e.code}');

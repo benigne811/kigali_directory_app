@@ -14,13 +14,17 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _formKey   = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
-  final _passCtrl  = TextEditingController();
-  bool  _obscure   = true;
+  final _passCtrl = TextEditingController();
+  bool _obscure = true;
 
   @override
-  void dispose() { _emailCtrl.dispose(); _passCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _emailCtrl.dispose();
+    _passCtrl.dispose();
+    super.dispose();
+  }
 
   void _showError(String msg) {
     if (!mounted) return;
@@ -31,9 +35,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         content: Row(children: [
           const Icon(Icons.error_outline, color: Colors.white, size: 20),
           const SizedBox(width: 10),
-          Expanded(child: Text(msg,
-              style: const TextStyle(color: Colors.white,
-                  fontWeight: FontWeight.w600))),
+          Expanded(
+              child: Text(msg,
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w600))),
         ]),
         backgroundColor: AppColors.error,
         behavior: SnackBarBehavior.floating,
@@ -48,9 +53,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
     await ref.read(authNotifierProvider.notifier).signIn(
-      email: _emailCtrl.text.trim(),
-      password: _passCtrl.text,
-    );
+          email: _emailCtrl.text.trim(),
+          password: _passCtrl.text,
+        );
+    // Explicit navigation fallback if GoRouter redirect lags
+    if (mounted && !ref.read(authNotifierProvider).hasError) {
+      context.go('/home');
+    }
   }
 
   @override
@@ -80,7 +89,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 // Brand
                 Row(children: [
                   Container(
-                    width: 52, height: 52,
+                    width: 52,
+                    height: 52,
                     decoration: BoxDecoration(
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(14),
@@ -89,13 +99,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         color: Colors.white, size: 28),
                   ),
                   const SizedBox(width: 14),
-                  Column(crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Kigali City',
-                          style: AppTextStyles.titleLarge
-                              .copyWith(color: AppColors.primary)),
-                      Text('Services Directory', style: AppTextStyles.caption),
-                    ]),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Kigali City',
+                            style: AppTextStyles.titleLarge
+                                .copyWith(color: AppColors.primary)),
+                        Text('Services Directory',
+                            style: AppTextStyles.caption),
+                      ]),
                 ]),
                 const SizedBox(height: 52),
                 Text('Welcome back', style: AppTextStyles.displayLarge),
@@ -110,7 +122,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Email is required';
+                    if (v == null || v.trim().isEmpty)
+                      return 'Email is required';
                     if (!v.contains('@')) return 'Enter a valid email';
                     return null;
                   },

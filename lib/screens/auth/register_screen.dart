@@ -14,11 +14,11 @@ class RegisterScreen extends ConsumerStatefulWidget {
 }
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
-  final _formKey     = GlobalKey<FormState>();
-  final _emailCtrl   = TextEditingController();
-  final _passCtrl    = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _emailCtrl = TextEditingController();
+  final _passCtrl = TextEditingController();
   final _confirmCtrl = TextEditingController();
-  bool _obscurePass    = true;
+  bool _obscurePass = true;
   bool _obscureConfirm = true;
 
   @override
@@ -37,9 +37,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         content: Row(children: [
           const Icon(Icons.error_outline, color: Colors.white, size: 20),
           const SizedBox(width: 10),
-          Expanded(child: Text(msg,
-              style: const TextStyle(color: Colors.white,
-                  fontWeight: FontWeight.w600))),
+          Expanded(
+              child: Text(msg,
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w600))),
         ]),
         backgroundColor: AppColors.error,
         behavior: SnackBarBehavior.floating,
@@ -54,9 +55,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
     await ref.read(authNotifierProvider.notifier).signUp(
-      email: _emailCtrl.text.trim(),
-      password: _passCtrl.text,
-    );
+          email: _emailCtrl.text.trim(),
+          password: _passCtrl.text,
+        );
+    if (mounted && !ref.read(authNotifierProvider).hasError) {
+      context.go('/verify-email');
+    }
   }
 
   @override
@@ -102,7 +106,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Email is required';
+                    if (v == null || v.trim().isEmpty)
+                      return 'Email is required';
                     if (!v.contains('@')) return 'Enter a valid email';
                     return null;
                   },

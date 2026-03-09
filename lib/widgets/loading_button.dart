@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import '../utils/app_theme.dart';
 
 class LoadingButton extends StatelessWidget {
-  final String   label;
-  final bool     isLoading;
+  final String label;
+  final bool isLoading;
   final VoidCallback? onPressed;
-  final Color?   color;
+  final Color? color;
 
   const LoadingButton({
     super.key,
@@ -29,13 +29,15 @@ class LoadingButton extends StatelessWidget {
         ),
         child: isLoading
             ? const SizedBox(
-                width: 22, height: 22,
+                width: 22,
+                height: 22,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.5,
                   valueColor: AlwaysStoppedAnimation(Colors.white),
                 ),
               )
-            : Text(label, style: AppTextStyles.button),
+            : Text(label,
+                style: AppTextStyles.button.copyWith(color: Colors.white)),
       ),
     );
   }

@@ -11,7 +11,7 @@ import '../map/map_screen.dart';
 import '../settings/settings_screen.dart';
 import '../../utils/app_theme.dart';
 
-final activeTabProvider = StateProvider<int>((ref) => 0);
+final activeTabProvider = StateProvider.autoDispose<int>((ref) => 0);
 
 class MainShell extends ConsumerWidget {
   const MainShell({super.key});
@@ -46,10 +46,10 @@ class MainShell extends ConsumerWidget {
           backgroundColor: AppColors.surface,
           selectedItemColor: AppColors.primary,
           unselectedItemColor: AppColors.textHint,
-          selectedLabelStyle: const TextStyle(
-              fontSize: 11, fontWeight: FontWeight.w700),
-          unselectedLabelStyle: const TextStyle(
-              fontSize: 11, fontWeight: FontWeight.w500),
+          selectedLabelStyle:
+              const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+          unselectedLabelStyle:
+              const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
           elevation: 0,
           items: const [
             BottomNavigationBarItem(

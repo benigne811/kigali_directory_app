@@ -28,8 +28,7 @@ class MapScreen extends ConsumerWidget {
       body: listingsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
-          child: Text('Error loading map: $e',
-              style: AppTextStyles.bodyMedium),
+          child: Text('Error loading map: $e', style: AppTextStyles.bodyMedium),
         ),
         data: (listings) {
           if (listings.isEmpty) {
@@ -70,8 +69,8 @@ class MapScreen extends ConsumerWidget {
               // ── Listing chips below the map ───────────────────
               Container(
                 color: AppColors.surface,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -87,8 +86,7 @@ class MapScreen extends ConsumerWidget {
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: listings.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(width: 10),
+                        separatorBuilder: (_, __) => const SizedBox(width: 10),
                         itemBuilder: (_, i) =>
                             _ListingChip(listing: listings[i]),
                       ),
@@ -125,7 +123,8 @@ class _ListingChip extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 36, height: 36,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
                 color: AppColors.primary.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(10),
@@ -140,8 +139,7 @@ class _ListingChip extends StatelessWidget {
                 overflow: TextOverflow.ellipsis),
             const SizedBox(height: 2),
             Text(listing.category.label,
-                style: AppTextStyles.caption,
-                maxLines: 1),
+                style: AppTextStyles.caption, maxLines: 1),
             const SizedBox(height: 4),
             Row(children: [
               const Icon(Icons.star_rounded,
@@ -158,15 +156,24 @@ class _ListingChip extends StatelessWidget {
 
   IconData _icon(ListingCategory c) {
     switch (c) {
-      case ListingCategory.cafe:              return Icons.coffee_outlined;
-      case ListingCategory.hospital:          return Icons.local_hospital_outlined;
-      case ListingCategory.pharmacy:          return Icons.medication_outlined;
-      case ListingCategory.policeStation:     return Icons.local_police_outlined;
-      case ListingCategory.park:              return Icons.park_outlined;
-      case ListingCategory.library:           return Icons.local_library_outlined;
-      case ListingCategory.restaurant:        return Icons.restaurant_outlined;
-      case ListingCategory.touristAttraction: return Icons.camera_alt_outlined;
-      case ListingCategory.other:             return Icons.place_outlined;
+      case ListingCategory.cafe:
+        return Icons.coffee_outlined;
+      case ListingCategory.hospital:
+        return Icons.local_hospital_outlined;
+      case ListingCategory.pharmacy:
+        return Icons.medication_outlined;
+      case ListingCategory.policeStation:
+        return Icons.local_police_outlined;
+      case ListingCategory.park:
+        return Icons.park_outlined;
+      case ListingCategory.library:
+        return Icons.local_library_outlined;
+      case ListingCategory.restaurant:
+        return Icons.restaurant_outlined;
+      case ListingCategory.touristAttraction:
+        return Icons.camera_alt_outlined;
+      case ListingCategory.other:
+        return Icons.place_outlined;
     }
   }
 }

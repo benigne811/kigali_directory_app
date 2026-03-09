@@ -26,50 +26,55 @@ final listingServiceProvider =
     Provider<ListingService>((ref) => ListingService());
 
 // ── All listings (real-time stream) ─────────────────────────────
-final allListingsProvider = StreamProvider<List<ListingModel>>((ref) {
+final allListingsProvider =
+    StreamProvider.autoDispose<List<ListingModel>>((ref) {
+  final user = ref.watch(authStateProvider).value;
+  if (user == null) return const Stream.empty();
   return ref.watch(listingServiceProvider).allListings();
 });
 
 // ── Listings by category (parameterised stream) ──────────────────
 // Usage: ref.watch(categoryListingsProvider(ListingCategory.cafe))
-final categoryListingsProvider =
-    StreamProvider.family<List<ListingModel>, ListingCategory>(
-  (ref, category) =>
-      ref.watch(listingServiceProvider).listingsByCategory(category),
-);
+final categoryListingsProvider = StreamProvider.autoDispose
+    .family<List<ListingModel>, ListingCategory>((ref, category) {
+  final user = ref.watch(authStateProvider).value;
+  if (user == null) return const Stream.empty();
+  return ref.watch(listingServiceProvider).listingsByCategory(category);
+});
 
 // ── My listings ──────────────────────────────────────────────────
-final myListingsProvider = StreamProvider<List<ListingModel>>((ref) {
+final myListingsProvider =
+    StreamProvider.autoDispose<List<ListingModel>>((ref) {
   final uid = ref.watch(authStateProvider).value?.uid;
   if (uid == null) return const Stream.empty();
   return ref.watch(listingServiceProvider).myListings(uid);
 });
 
 // ── Reviews for a listing ────────────────────────────────────────
-final reviewsProvider =
-    StreamProvider.family<List<ReviewModel>, String>(
-  (ref, listingId) =>
-      ref.watch(listingServiceProvider).reviews(listingId),
-);
+final reviewsProvider = StreamProvider.autoDispose
+    .family<List<ReviewModel>, String>((ref, listingId) {
+  if (ref.watch(authStateProvider).value == null) return const Stream.empty();
+  return ref.watch(listingServiceProvider).reviews(listingId);
+});
 
 // ══════════════════════════════════════════════════════════════
 //  SEARCH & FILTER STATE
 // ══════════════════════════════════════════════════════════════
 
 // The text typed into the search bar
-final searchQueryProvider = StateProvider<String>((ref) => '');
+final searchQueryProvider = StateProvider.autoDispose<String>((ref) => '');
 
 // The active category chip (null = show all)
 final activeCategoryProvider =
-    StateProvider<ListingCategory?>((ref) => null);
+    StateProvider.autoDispose<ListingCategory?>((ref) => null);
 
 // Derived provider: combines stream data + search + category filter.
 // This is a synchronous Provider because the data is already loaded.
 final filteredListingsProvider =
-    Provider<AsyncValue<List<ListingModel>>>((ref) {
-  final allAsync   = ref.watch(allListingsProvider);
-  final query      = ref.watch(searchQueryProvider).toLowerCase().trim();
-  final activecat  = ref.watch(activeCategoryProvider);
+    Provider.autoDispose<AsyncValue<List<ListingModel>>>((ref) {
+  final allAsync = ref.watch(allListingsProvider);
+  final query = ref.watch(searchQueryProvider).toLowerCase().trim();
+  final activecat = ref.watch(activeCategoryProvider);
 
   return allAsync.whenData((all) {
     var result = all;
@@ -81,10 +86,12 @@ final filteredListingsProvider =
 
     // Text search on name, address, category label
     if (query.isNotEmpty) {
-      result = result.where((l) =>
-          l.placeName.toLowerCase().contains(query) ||
-          l.address.toLowerCase().contains(query) ||
-          l.category.label.toLowerCase().contains(query)).toList();
+      result = result
+          .where((l) =>
+              l.placeName.toLowerCase().contains(query) ||
+              l.address.toLowerCase().contains(query) ||
+              l.category.label.toLowerCase().contains(query))
+          .toList();
     }
 
     return result;
@@ -132,9 +139,9 @@ final bookmarkNotifierProvider =
 
 // Full ListingModel objects for all bookmarked IDs
 final bookmarkedListingsProvider = Provider<List<ListingModel>>((ref) {
-  final ids      = ref.watch(bookmarkNotifierProvider);
+  final ids = ref.watch(bookmarkNotifierProvider);
   final allAsync = ref.watch(allListingsProvider);
-  final all      = allAsync.value ?? [];
+  final all = allAsync.value ?? [];
   return all.where((l) => ids.contains(l.id)).toList();
 });
 
@@ -144,7 +151,7 @@ final bookmarkedListingsProvider = Provider<List<ListingModel>>((ref) {
 
 class ListingCrudNotifier extends StateNotifier<AsyncValue<void>> {
   final ListingService _svc;
-  final String         _uid;
+  final String _uid;
 
   ListingCrudNotifier(this._svc, this._uid)
       : super(const AsyncValue.data(null));
@@ -152,8 +159,7 @@ class ListingCrudNotifier extends StateNotifier<AsyncValue<void>> {
   Future<String?> create(ListingModel listing) async {
     state = const AsyncValue.loading();
     try {
-      final id = await _svc.createListing(
-          listing.copyWith(createdBy: _uid));
+      final id = await _svc.createListing(listing.copyWith(createdBy: _uid));
       state = const AsyncValue.data(null);
       return id;
     } catch (e, st) {

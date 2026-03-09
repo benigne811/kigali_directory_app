@@ -43,22 +43,19 @@ class ListingService {
         .where('category', isEqualTo: category.value)
         .snapshots()
         .map((snap) {
-          final list = snap.docs.map(ListingModel.fromDocument).toList();
-          list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-          return list;
-        });
+      final list = snap.docs.map(ListingModel.fromDocument).toList();
+      list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+      return list;
+    });
   }
 
   /// Listings created by a specific user (for "My Listings" / edit screen).
   Stream<List<ListingModel>> myListings(String uid) {
-    return _listings
-        .where('createdBy', isEqualTo: uid)
-        .snapshots()
-        .map((snap) {
-          final list = snap.docs.map(ListingModel.fromDocument).toList();
-          list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-          return list;
-        });
+    return _listings.where('createdBy', isEqualTo: uid).snapshots().map((snap) {
+      final list = snap.docs.map(ListingModel.fromDocument).toList();
+      list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+      return list;
+    });
   }
 
   /// Reviews for one listing, newest first.
@@ -113,21 +110,21 @@ class ListingService {
   /// A Firestore Transaction guarantees the average is always accurate,
   /// even if multiple users submit reviews simultaneously.
   Future<void> addReview({
-    required String      listingId,
+    required String listingId,
     required ReviewModel review,
   }) async {
     await _db.runTransaction((tx) async {
       final listingRef = _listings.doc(listingId);
-      final snap       = await tx.get(listingRef);
+      final snap = await tx.get(listingRef);
 
       if (!snap.exists) throw Exception('Listing not found');
 
-      final data         = snap.data()!;
-      final oldCount     = (data['reviewCount']   as int?)    ?? 0;
-      final oldAvg       = (data['averageRating'] as num?)?.toDouble() ?? 0.0;
-      final newCount     = oldCount + 1;
+      final data = snap.data()!;
+      final oldCount = (data['reviewCount'] as int?) ?? 0;
+      final oldAvg = (data['averageRating'] as num?)?.toDouble() ?? 0.0;
+      final newCount = oldCount + 1;
       // Incremental average formula: avoidd re-fetching all reviews
-      final newAvg       = ((oldAvg * oldCount) + review.rating) / newCount;
+      final newAvg = ((oldAvg * oldCount) + review.rating) / newCount;
 
       // Write the review document
       final reviewRef = _reviews(listingId).doc();
@@ -135,7 +132,7 @@ class ListingService {
 
       // Update listing's denormalised rating
       tx.update(listingRef, {
-        'reviewCount':   newCount,
+        'reviewCount': newCount,
         'averageRating': double.parse(newAvg.toStringAsFixed(1)),
       });
     });
@@ -153,92 +150,116 @@ class ListingService {
     final now = DateTime.now();
     final seeds = <Map<String, dynamic>>[
       {
-        'placeName':     'Inzozi Coffee House',
-        'category':      'cafe',
-        'address':       'KG 11 Ave, Kacyiru, Kigali',
+        'placeName': 'Inzozi Coffee House',
+        'category': 'cafe',
+        'address': 'KG 11 Ave, Kacyiru, Kigali',
         'contactNumber': '+250 788 100 201',
-        'description':   'Tucked into a quiet corner of Kacyiru, Inzozi serves single-origin Rwandan beans sourced directly from Huye Mountain. The terrace overlooks bougainvillea-filled gardens — ideal for morning meetings or a slow afternoon read.',
-        'latitude': -1.9392, 'longitude': 30.0918,
+        'description':
+            'Tucked into a quiet corner of Kacyiru, Inzozi serves single-origin Rwandan beans sourced directly from Huye Mountain. The terrace overlooks bougainvillea-filled gardens — ideal for morning meetings or a slow afternoon read.',
+        'latitude': -1.9392,
+        'longitude': 30.0918,
         'createdBy': creatorUid,
-        'timestamp':     Timestamp.fromDate(now.subtract(const Duration(days: 2))),
-        'averageRating': 4.8, 'reviewCount': 41,
+        'timestamp': Timestamp.fromDate(now.subtract(const Duration(days: 2))),
+        'averageRating': 4.8,
+        'reviewCount': 41,
       },
       {
-        'placeName':     'Ikirezi Pharmacy Kimihurura',
-        'category':      'pharmacy',
-        'address':       'KG 5 Rd, Kimihurura, Kigali',
+        'placeName': 'Ikirezi Pharmacy Kimihurura',
+        'category': 'pharmacy',
+        'address': 'KG 5 Rd, Kimihurura, Kigali',
         'contactNumber': '+250 788 305 400',
-        'description':   'A well-stocked community pharmacy in the heart of Kimihurura. Qualified pharmacists offer free consultations Mon–Sat 7 am–9 pm. Prescription and OTC medications always available.',
-        'latitude': -1.9465, 'longitude': 30.0947,
+        'description':
+            'A well-stocked community pharmacy in the heart of Kimihurura. Qualified pharmacists offer free consultations Mon–Sat 7 am–9 pm. Prescription and OTC medications always available.',
+        'latitude': -1.9465,
+        'longitude': 30.0947,
         'createdBy': creatorUid,
-        'timestamp':     Timestamp.fromDate(now.subtract(const Duration(days: 5))),
-        'averageRating': 4.5, 'reviewCount': 27,
+        'timestamp': Timestamp.fromDate(now.subtract(const Duration(days: 5))),
+        'averageRating': 4.5,
+        'reviewCount': 27,
       },
       {
-        'placeName':     'Kacyiru District Hospital',
-        'category':      'hospital',
-        'address':       'KG 17 Ave, Kacyiru, Kigali',
+        'placeName': 'Kacyiru District Hospital',
+        'category': 'hospital',
+        'address': 'KG 17 Ave, Kacyiru, Kigali',
         'contactNumber': '+250 252 580 060',
-        'description':   'A government-run district hospital serving Kacyiru and surrounding sectors. Offers 24-hour emergency care, maternal health, general medicine, and a fully equipped laboratory.',
-        'latitude': -1.9400, 'longitude': 30.0890,
+        'description':
+            'A government-run district hospital serving Kacyiru and surrounding sectors. Offers 24-hour emergency care, maternal health, general medicine, and a fully equipped laboratory.',
+        'latitude': -1.9400,
+        'longitude': 30.0890,
         'createdBy': creatorUid,
-        'timestamp':     Timestamp.fromDate(now.subtract(const Duration(days: 10))),
-        'averageRating': 4.1, 'reviewCount': 19,
+        'timestamp': Timestamp.fromDate(now.subtract(const Duration(days: 10))),
+        'averageRating': 4.1,
+        'reviewCount': 19,
       },
       {
-        'placeName':     'Remera Police Station',
-        'category':      'police_station',
-        'address':       'KG 14 Ave, Remera, Kigali',
+        'placeName': 'Remera Police Station',
+        'category': 'police_station',
+        'address': 'KG 14 Ave, Remera, Kigali',
         'contactNumber': '+250 788 311 155',
-        'description':   'Kigali Metropolitan Police sub-station serving Remera sector. Handles crime reports, traffic incidents, community safety, and lost property. Emergency line available 24/7.',
-        'latitude': -1.9501, 'longitude': 30.1025,
+        'description':
+            'Kigali Metropolitan Police sub-station serving Remera sector. Handles crime reports, traffic incidents, community safety, and lost property. Emergency line available 24/7.',
+        'latitude': -1.9501,
+        'longitude': 30.1025,
         'createdBy': creatorUid,
-        'timestamp':     Timestamp.fromDate(now.subtract(const Duration(days: 7))),
-        'averageRating': 3.9, 'reviewCount': 12,
+        'timestamp': Timestamp.fromDate(now.subtract(const Duration(days: 7))),
+        'averageRating': 3.9,
+        'reviewCount': 12,
       },
       {
-        'placeName':     'Amahoro Botanical Garden',
-        'category':      'park',
-        'address':       'Boulevard de l\'Umuganda, Kimihurura',
+        'placeName': 'Amahoro Botanical Garden',
+        'category': 'park',
+        'address': 'Boulevard de l\'Umuganda, Kimihurura',
         'contactNumber': '+250 788 000 123',
-        'description':   'A beautifully maintained public garden near the Kimihurura roundabout. Walking paths, outdoor gym equipment, a children\'s play zone, and weekend food vendors make this a favourite for families and joggers.',
-        'latitude': -1.9441, 'longitude': 30.0980,
+        'description':
+            'A beautifully maintained public garden near the Kimihurura roundabout. Walking paths, outdoor gym equipment, a children\'s play zone, and weekend food vendors make this a favourite for families and joggers.',
+        'latitude': -1.9441,
+        'longitude': 30.0980,
         'createdBy': creatorUid,
-        'timestamp':     Timestamp.fromDate(now.subtract(const Duration(days: 14))),
-        'averageRating': 4.6, 'reviewCount': 53,
+        'timestamp': Timestamp.fromDate(now.subtract(const Duration(days: 14))),
+        'averageRating': 4.6,
+        'reviewCount': 53,
       },
       {
-        'placeName':     'Nyamirambo Community Library',
-        'category':      'library',
-        'address':       'KN 3 St, Nyamirambo, Kigali',
+        'placeName': 'Nyamirambo Community Library',
+        'category': 'library',
+        'address': 'KN 3 St, Nyamirambo, Kigali',
         'contactNumber': '+250 252 570 020',
-        'description':   'A peaceful public library funded by the Kigali City Council. Houses 9 000+ books in Kinyarwanda, French, and English. Free Wi-Fi, study rooms, and weekend reading clubs for children.',
-        'latitude': -1.9800, 'longitude': 30.0370,
+        'description':
+            'A peaceful public library funded by the Kigali City Council. Houses 9 000+ books in Kinyarwanda, French, and English. Free Wi-Fi, study rooms, and weekend reading clubs for children.',
+        'latitude': -1.9800,
+        'longitude': 30.0370,
         'createdBy': creatorUid,
-        'timestamp':     Timestamp.fromDate(now.subtract(const Duration(days: 21))),
-        'averageRating': 4.4, 'reviewCount': 31,
+        'timestamp': Timestamp.fromDate(now.subtract(const Duration(days: 21))),
+        'averageRating': 4.4,
+        'reviewCount': 31,
       },
       {
-        'placeName':     'Ibirunga Resto & Grill',
-        'category':      'restaurant',
-        'address':       'KG 9 Ave, Gishushu, Kigali',
+        'placeName': 'Ibirunga Resto & Grill',
+        'category': 'restaurant',
+        'address': 'KG 9 Ave, Gishushu, Kigali',
         'contactNumber': '+250 788 721 300',
-        'description':   'Authentic Rwandan cuisine in a lively rooftop setting above Gishushu. Signature dishes: isombe na ibirayi, brochettes ya inka, and fresh tilapia from Lake Kivu. Live music Friday evenings.',
-        'latitude': -1.9517, 'longitude': 30.0741,
+        'description':
+            'Authentic Rwandan cuisine in a lively rooftop setting above Gishushu. Signature dishes: isombe na ibirayi, brochettes ya inka, and fresh tilapia from Lake Kivu. Live music Friday evenings.',
+        'latitude': -1.9517,
+        'longitude': 30.0741,
         'createdBy': creatorUid,
-        'timestamp':     Timestamp.fromDate(now.subtract(const Duration(days: 1))),
-        'averageRating': 4.9, 'reviewCount': 78,
+        'timestamp': Timestamp.fromDate(now.subtract(const Duration(days: 1))),
+        'averageRating': 4.9,
+        'reviewCount': 78,
       },
       {
-        'placeName':     'Kandt House Museum',
-        'category':      'tourist_attraction',
-        'address':       'KN 67 St, Nyarugenge, Kigali',
+        'placeName': 'Kandt House Museum',
+        'category': 'tourist_attraction',
+        'address': 'KN 67 St, Nyarugenge, Kigali',
         'contactNumber': '+250 252 576 515',
-        'description':   'The oldest preserved house in Kigali, built by Dr Richard Kandt — the city\'s first European resident. Now a natural history and heritage museum. Open Tue–Sun, 9 am–5 pm. Entry 3 000 RWF.',
-        'latitude': -1.9500, 'longitude': 30.0590,
+        'description':
+            'The oldest preserved house in Kigali, built by Dr Richard Kandt — the city\'s first European resident. Now a natural history and heritage museum. Open Tue–Sun, 9 am–5 pm. Entry 3 000 RWF.',
+        'latitude': -1.9500,
+        'longitude': 30.0590,
         'createdBy': creatorUid,
-        'timestamp':     Timestamp.fromDate(now.subtract(const Duration(days: 30))),
-        'averageRating': 4.3, 'reviewCount': 62,
+        'timestamp': Timestamp.fromDate(now.subtract(const Duration(days: 30))),
+        'averageRating': 4.3,
+        'reviewCount': 62,
       },
     ];
 

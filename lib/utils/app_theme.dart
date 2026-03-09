@@ -34,17 +34,23 @@ class AppColors {
 }
 
 class AppTextStyles {
-  static const displayLarge = TextStyle(fontSize: 32, fontWeight: FontWeight.bold);
-  static const displayMedium = TextStyle(fontSize: 28, fontWeight: FontWeight.bold);
+  static const displayLarge =
+      TextStyle(fontSize: 32, fontWeight: FontWeight.bold);
+  static const displayMedium =
+      TextStyle(fontSize: 28, fontWeight: FontWeight.bold);
 
-  static const titleLarge = TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
-  static const titleMedium = TextStyle(fontSize: 18, fontWeight: FontWeight.w600);
-  static const titleSmall = TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
+  static const titleLarge =
+      TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
+  static const titleMedium =
+      TextStyle(fontSize: 18, fontWeight: FontWeight.w600);
+  static const titleSmall =
+      TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
 
   static const bodyLarge = TextStyle(fontSize: 16);
   static const bodyMedium = TextStyle(fontSize: 14);
 
-  static const labelLarge = TextStyle(fontSize: 14, fontWeight: FontWeight.w500);
+  static const labelLarge =
+      TextStyle(fontSize: 14, fontWeight: FontWeight.w500);
 
   static const caption = TextStyle(fontSize: 12, color: Colors.grey);
 
@@ -53,7 +59,60 @@ class AppTextStyles {
 
 class AppTheme {
   static final theme = ThemeData(
-    primaryColor: AppColors.primary,
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.primary,
+      primary: AppColors.primary,
+      secondary: AppColors.accent,
+      background: AppColors.background,
+      surface: AppColors.surface,
+      error: AppColors.error,
+    ),
     scaffoldBackgroundColor: AppColors.background,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: AppColors.surface,
+      foregroundColor: AppColors.textPrimary,
+      elevation: 0,
+      centerTitle: true,
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        elevation: 0,
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        textStyle: const TextStyle(
+            fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: AppColors.primary,
+        textStyle: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: AppColors.surfaceAlt,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.primary, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.error, width: 1),
+      ),
+    ),
   );
 }

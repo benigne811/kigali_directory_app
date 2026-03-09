@@ -1,6 +1,7 @@
 // lib/main.dart
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -48,17 +49,14 @@ GoRouter _buildRouter(WidgetRef ref) {
       ref.read(authServiceProvider).authStateChanges,
     ),
     redirect: (context, state) {
-      final authAsync = ref.read(authStateProvider);
-      if (authAsync.isLoading) return null;
-
-      final user       = authAsync.value;
+      final user = FirebaseAuth.instance.currentUser;
       final isLoggedIn = user != null;
-      final path       = state.matchedLocation;
+      final path = state.matchedLocation;
 
       if (!isLoggedIn) {
-        if (path == '/register')     return null;
+        if (path == '/register') return null;
         if (path == '/verify-email') return null;
-        if (path == '/login')        return null;
+        if (path == '/login') return null;
         return '/login';
       }
 
@@ -71,15 +69,16 @@ GoRouter _buildRouter(WidgetRef ref) {
       return null;
     },
     routes: [
-      GoRoute(path: '/login',        builder: (_, __) => const LoginScreen()),
-      GoRoute(path: '/register',     builder: (_, __) => const RegisterScreen()),
-      GoRoute(path: '/verify-email', builder: (_, __) => const VerifyEmailScreen()),
-      GoRoute(path: '/home',         builder: (_, __) => const MainShell()),
+      GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
+      GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
+      GoRoute(
+          path: '/verify-email', builder: (_, __) => const VerifyEmailScreen()),
+      GoRoute(path: '/home', builder: (_, __) => const MainShell()),
       GoRoute(
         path: '/listing/:id',
         builder: (_, state) => ServiceDetailScreen(
           listingId: state.pathParameters['id']!,
-          listing:   state.extra as ListingModel?,
+          listing: state.extra as ListingModel?,
         ),
       ),
       GoRoute(
@@ -88,7 +87,8 @@ GoRouter _buildRouter(WidgetRef ref) {
           category: ListingCategory.fromValue(state.pathParameters['cat']),
         ),
       ),
-      GoRoute(path: '/add-listing',      builder: (_, __) => const AddListingScreen()),
+      GoRoute(
+          path: '/add-listing', builder: (_, __) => const AddListingScreen()),
       GoRoute(
         path: '/edit-listing/:id',
         builder: (_, state) => EditListingScreen(
@@ -106,5 +106,8 @@ class GoRouterRefreshStream extends ChangeNotifier {
     _sub = stream.asBroadcastStream().listen((_) => notifyListeners());
   }
   @override
-  void dispose() { _sub.cancel(); super.dispose(); }
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
+  }
 }

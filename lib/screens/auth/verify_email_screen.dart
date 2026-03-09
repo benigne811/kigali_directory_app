@@ -4,6 +4,7 @@
 // User just taps "Confirm Email Verified" and enters the app.
 
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
@@ -27,7 +28,8 @@ class VerifyEmailScreen extends ConsumerWidget {
 
               // Icon
               Container(
-                width: 120, height: 120,
+                width: 120,
+                height: 120,
                 decoration: BoxDecoration(
                   color: AppColors.primary.withOpacity(0.1),
                   shape: BoxShape.circle,
@@ -44,14 +46,15 @@ class VerifyEmailScreen extends ConsumerWidget {
 
               // Show the actual email
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(email,
-                    style: AppTextStyles.titleSmall.copyWith(
-                        color: AppColors.primary),
+                    style: AppTextStyles.titleSmall
+                        .copyWith(color: AppColors.primary),
                     textAlign: TextAlign.center),
               ),
               const SizedBox(height: 16),
@@ -69,8 +72,11 @@ class VerifyEmailScreen extends ConsumerWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    // Mark verification done → GoRouter → /home
-                    ref.read(authNotifierProvider.notifier).confirmVerification();
+                    // Just confirm the mock verification and proceed
+                    ref.read(needsVerificationProvider.notifier).state = false;
+                    ref
+                        .read(authNotifierProvider.notifier)
+                        .confirmVerification();
                     context.go('/home');
                   },
                   icon: const Icon(Icons.verified_user_outlined, size: 20),
