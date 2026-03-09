@@ -212,7 +212,7 @@ This modular structure helps separate concerns and keep the project organized.
 1. Clone the repository:
 
 ```
-git clone https://github.com/your-username/kigali-directory-app.git
+git clone https://github.com/benigne811/kigali-directory-app.git
 ```
 
 2. Navigate to the project folder:
