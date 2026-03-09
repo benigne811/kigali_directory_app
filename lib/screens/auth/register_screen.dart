@@ -59,7 +59,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           password: _passCtrl.text,
         );
     if (mounted && !ref.read(authNotifierProvider).hasError) {
-      context.go('/verify-email');
+      context.go('/login');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(children: [
+            Icon(Icons.mark_email_read, color: Colors.white),
+            SizedBox(width: 12),
+            Expanded(
+                child: Text(
+                    'Account created! Please verify your email before logging in.',
+                    style: TextStyle(color: Colors.white))),
+          ]),
+          backgroundColor: AppColors.success,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 8),
+          margin: EdgeInsets.all(16),
+        ),
+      );
     }
   }
 

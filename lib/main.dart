@@ -11,7 +11,6 @@ import 'providers/auth_provider.dart';
 import 'utils/app_theme.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
-import 'screens/auth/verify_email_screen.dart';
 import 'screens/home/main_shell.dart';
 import 'screens/detail/service_detail_screen.dart';
 import 'screens/directory/category_screen.dart';
@@ -49,20 +48,14 @@ GoRouter _buildRouter(WidgetRef ref) {
     ),
     redirect: (context, state) {
       final user = FirebaseAuth.instance.currentUser;
-      final isLoggedIn = user != null;
+      final isLoggedIn = user != null && user.emailVerified;
       final path = state.matchedLocation;
 
       if (!isLoggedIn) {
         if (path == '/register') return null;
-        if (path == '/verify-email') return null;
         if (path == '/login') return null;
         return '/login';
       }
-
-      // Logged in — check if awaiting mock verification
-      final needsVerify = ref.read(needsVerificationProvider);
-      if (needsVerify && path != '/verify-email') return '/verify-email';
-      if (!needsVerify && path == '/verify-email') return '/home';
 
       if (path == '/login' || path == '/register') return '/home';
       return null;
@@ -70,8 +63,6 @@ GoRouter _buildRouter(WidgetRef ref) {
     routes: [
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
-      GoRoute(
-          path: '/verify-email', builder: (_, __) => const VerifyEmailScreen()),
       GoRoute(path: '/home', builder: (_, __) => const MainShell()),
       GoRoute(
         path: '/listing/:id',

@@ -22,6 +22,12 @@ class AuthService {
         email: email.trim(),
         password: password,
       );
+
+      // SEND REAL VERIFICATION EMAIL
+      if (cred.user != null && !cred.user!.emailVerified) {
+        await cred.user!.sendEmailVerification();
+      }
+
       final model = UserModel(
         uid: cred.user!.uid,
         email: email.trim(),
@@ -51,6 +57,12 @@ class AuthService {
         email: email.trim(),
         password: password,
       );
+
+      if (!cred.user!.emailVerified) {
+        await _auth.signOut(); // Keep them out until they verify
+        throw 'Please verify your email address before logging in. Check your inbox!';
+      }
+
       return cred.user!;
     } on FirebaseAuthException catch (e) {
       debugPrint('🔴 signIn: ${e.code}');

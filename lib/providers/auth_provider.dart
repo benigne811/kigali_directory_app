@@ -18,15 +18,10 @@ final currentUserProvider = FutureProvider.autoDispose<UserModel?>((ref) async {
   return ref.read(authServiceProvider).getUserProfile(user.uid);
 });
 
-// Controls whether to show the verify screen after registration
-final needsVerificationProvider =
-    StateProvider.autoDispose<bool>((ref) => false);
-
 class AuthNotifier extends StateNotifier<AsyncValue<void>> {
   final AuthService _svc;
-  final Ref _ref;
 
-  AuthNotifier(this._svc, this._ref) : super(const AsyncValue.data(null));
+  AuthNotifier(this._svc) : super(const AsyncValue.data(null));
 
   Future<void> signUp({
     required String email,
@@ -35,9 +30,9 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
     if (state.isLoading) return;
     state = const AsyncValue.loading();
     try {
-      _ref.read(needsVerificationProvider.notifier).state = true;
       await _svc.signUp(email: email, password: password);
-      // Wait for user to verify email
+      // Immediately sign out to require them to log in after verifying
+      await _svc.signOut();
       state = const AsyncValue.data(null);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -52,23 +47,15 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _svc.signIn(email: email, password: password);
-      // Ensure we don't ask for verification on login
-      _ref.read(needsVerificationProvider.notifier).state = false;
       state = const AsyncValue.data(null);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
   }
 
-  // Called when user taps "Confirm" on the mock verify screen
-  void confirmVerification() {
-    _ref.read(needsVerificationProvider.notifier).state = false;
-  }
-
   Future<void> signOut() async {
     state = const AsyncValue.loading();
     try {
-      _ref.read(needsVerificationProvider.notifier).state = false;
       await _svc.signOut();
       state = const AsyncValue.data(null);
     } catch (e, st) {
@@ -81,5 +68,5 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
 
 final authNotifierProvider =
     StateNotifierProvider<AuthNotifier, AsyncValue<void>>(
-  (ref) => AuthNotifier(ref.watch(authServiceProvider), ref),
+  (ref) => AuthNotifier(ref.watch(authServiceProvider)),
 );
