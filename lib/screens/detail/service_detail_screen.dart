@@ -14,11 +14,13 @@ import '../../providers/listing_provider.dart';
 import '../../utils/app_theme.dart';
 
 class ServiceDetailScreen extends ConsumerStatefulWidget {
-  final String        listingId;
+  final String listingId;
   final ListingModel? listing;
 
   const ServiceDetailScreen({
-    super.key, required this.listingId, this.listing,
+    super.key,
+    required this.listingId,
+    this.listing,
   });
 
   @override
@@ -27,11 +29,14 @@ class ServiceDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
-  double _rating      = 3;
-  final  _commentCtrl = TextEditingController();
+  double _rating = 3;
+  final _commentCtrl = TextEditingController();
 
   @override
-  void dispose() { _commentCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _commentCtrl.dispose();
+    super.dispose();
+  }
 
   Future<void> _openDirections(ListingModel l) async {
     final uri = Uri.parse(
@@ -58,50 +63,55 @@ class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) => Padding(
         padding: EdgeInsets.only(
-          left: 24, right: 24, top: 28,
+          left: 24,
+          right: 24,
+          top: 28,
           bottom: MediaQuery.of(context).viewInsets.bottom + 28,
         ),
-        child: StatefulBuilder(builder: (ctx, setModal) => Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40, height: 4,
-              margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                color: AppColors.divider,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Text('Rate ${l.placeName}', style: AppTextStyles.titleLarge),
-            const SizedBox(height: 20),
-            Center(
-              child: RatingBar.builder(
-                initialRating: 3,
-                minRating: 1,
-                itemCount: 5,
-                itemSize: 46,
-                itemBuilder: (_, __) =>
-                    const Icon(Icons.star_rounded, color: AppColors.starFilled),
-                onRatingUpdate: (r) => setModal(() => _rating = r),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _commentCtrl,
-              maxLines: 3,
-              decoration: const InputDecoration(
-                  hintText: 'Share your experience (optional)…'),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => _submitReview(l),
-                child: const Text('Submit Review'),
-              ),
-            ),
-          ],
-        )),
+        child: StatefulBuilder(
+            builder: (ctx, setModal) => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      decoration: BoxDecoration(
+                        color: AppColors.divider,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    Text('Rate ${l.placeName}',
+                        style: AppTextStyles.titleLarge),
+                    const SizedBox(height: 20),
+                    Center(
+                      child: RatingBar.builder(
+                        initialRating: 3,
+                        minRating: 1,
+                        itemCount: 5,
+                        itemSize: 46,
+                        itemBuilder: (_, __) => const Icon(Icons.star_rounded,
+                            color: AppColors.starFilled),
+                        onRatingUpdate: (r) => setModal(() => _rating = r),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _commentCtrl,
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                          hintText: 'Share your experience (optional)…'),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => _submitReview(l),
+                        child: const Text('Submit Review'),
+                      ),
+                    ),
+                  ],
+                )),
       ),
     );
   }
@@ -110,11 +120,15 @@ class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
     final user = ref.read(authStateProvider).value;
     if (user == null) return;
     final review = ReviewModel(
-      id: '', userId: user.uid, userEmail: user.email ?? '',
-      rating: _rating, comment: _commentCtrl.text.trim(),
+      id: '',
+      userId: user.uid,
+      userEmail: user.email ?? '',
+      rating: _rating,
+      comment: _commentCtrl.text.trim(),
       timestamp: DateTime.now(),
     );
-    await ref.read(listingCrudProvider.notifier)
+    await ref
+        .read(listingCrudProvider.notifier)
         .addReview(listingId: l.id, review: review);
     if (mounted) {
       Navigator.pop(context);
@@ -144,7 +158,9 @@ class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
     );
     if (ok == true && mounted) {
       await ref.read(listingCrudProvider.notifier).delete(id);
-      context.pop();
+      if (mounted) {
+        context.pop();
+      }
     }
   }
 
@@ -155,13 +171,12 @@ class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    final uid        = ref.watch(authStateProvider).value?.uid;
-    final isOwner    = uid == l.createdBy;
+    final uid = ref.watch(authStateProvider).value?.uid;
+    final isOwner = uid == l.createdBy;
     final bookmarked = ref.watch(bookmarkNotifierProvider).contains(l.id);
-    final reviews    = ref.watch(reviewsProvider(l.id));
+    final reviews = ref.watch(reviewsProvider(l.id));
 
-    final mapUrl =
-        'https://maps.google.com/maps?q=${l.latitude},${l.longitude}'
+    final mapUrl = 'https://maps.google.com/maps?q=${l.latitude},${l.longitude}'
         '&z=16&output=embed';
 
     return Scaffold(
@@ -172,14 +187,14 @@ class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
             expandedHeight: 220,
             pinned: true,
             backgroundColor: AppColors.primary,
-            leading: BackButton(color: Colors.white, onPressed: () => context.pop()),
+            leading:
+                BackButton(color: Colors.white, onPressed: () => context.pop()),
             actions: [
               IconButton(
                 icon: Icon(bookmarked ? Icons.bookmark : Icons.bookmark_border,
                     color: Colors.white),
-                onPressed: () => ref
-                    .read(bookmarkNotifierProvider.notifier)
-                    .toggle(l.id),
+                onPressed: () =>
+                    ref.read(bookmarkNotifierProvider.notifier).toggle(l.id),
               ),
               if (isOwner) ...[
                 IconButton(
@@ -196,7 +211,8 @@ class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
             flexibleSpace: FlexibleSpaceBar(
               title: Text(l.placeName,
                   style: const TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
                       color: Colors.white)),
               background: Container(
                 decoration: BoxDecoration(
@@ -205,18 +221,17 @@ class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
                     end: Alignment.bottomCenter,
                     colors: [
                       AppColors.primaryDark,
-                      AppColors.primary.withOpacity(0.85),
+                      AppColors.primary.withValues(alpha: 0.85),
                     ],
                   ),
                 ),
                 child: Center(
                   child: Icon(_catIcon(l.category),
-                      size: 80, color: Colors.white.withOpacity(0.2)),
+                      size: 80, color: Colors.white.withValues(alpha: 0.2)),
                 ),
               ),
             ),
           ),
-
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -228,7 +243,7 @@ class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryLight.withOpacity(0.15),
+                        color: AppColors.primaryLight.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(l.category.label,
@@ -254,21 +269,20 @@ class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
                         color: AppColors.primary),
                   ),
                   const SizedBox(height: 24),
-                  Text('About', style: AppTextStyles.titleMedium),
+                  const Text('About', style: AppTextStyles.titleMedium),
                   const SizedBox(height: 8),
                   Text(l.description, style: AppTextStyles.bodyLarge),
                   const SizedBox(height: 28),
 
                   // ── Embedded map ─────────────────────────────────
-                  Text('Location', style: AppTextStyles.titleMedium),
+                  const Text('Location', style: AppTextStyles.titleMedium),
                   const SizedBox(height: 12),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: SizedBox(
                       height: 240,
                       child: InAppWebView(
-                        initialUrlRequest:
-                            URLRequest(url: WebUri(mapUrl)),
+                        initialUrlRequest: URLRequest(url: WebUri(mapUrl)),
                         initialSettings: InAppWebViewSettings(
                           javaScriptEnabled: true,
                           domStorageEnabled: true,
@@ -276,8 +290,8 @@ class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
                           builtInZoomControls: true,
                           useWideViewPort: true,
                           loadWithOverviewMode: true,
-                          mixedContentMode: MixedContentMode
-                              .MIXED_CONTENT_ALWAYS_ALLOW,
+                          mixedContentMode:
+                              MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
                         ),
                       ),
                     ),
@@ -303,12 +317,12 @@ class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
                   const SizedBox(height: 32),
 
                   // ── Reviews ───────────────────────────────────────
-                  Text('Reviews', style: AppTextStyles.titleMedium),
+                  const Text('Reviews', style: AppTextStyles.titleMedium),
                   const SizedBox(height: 12),
                   reviews.when(
                     data: (list) => list.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16),
                             child: Text('No reviews yet. Be the first!',
                                 style: AppTextStyles.bodyMedium))
                         : Column(
@@ -330,24 +344,34 @@ class _ServiceDetailScreenState extends ConsumerState<ServiceDetailScreen> {
   }
 
   Widget _row(IconData icon, String text, {Color? color}) => Row(children: [
-    Icon(icon, size: 18, color: color ?? AppColors.primary),
-    const SizedBox(width: 10),
-    Expanded(child: Text(text,
-        style: AppTextStyles.bodyLarge.copyWith(color: color))),
-  ]);
+        Icon(icon, size: 18, color: color ?? AppColors.primary),
+        const SizedBox(width: 10),
+        Expanded(
+            child: Text(text,
+                style: AppTextStyles.bodyLarge.copyWith(color: color))),
+      ]);
 }
 
 IconData _catIcon(ListingCategory c) {
   switch (c) {
-    case ListingCategory.cafe:              return Icons.coffee_outlined;
-    case ListingCategory.hospital:          return Icons.local_hospital_outlined;
-    case ListingCategory.pharmacy:          return Icons.medication_outlined;
-    case ListingCategory.policeStation:     return Icons.local_police_outlined;
-    case ListingCategory.park:              return Icons.park_outlined;
-    case ListingCategory.library:           return Icons.local_library_outlined;
-    case ListingCategory.restaurant:        return Icons.restaurant_outlined;
-    case ListingCategory.touristAttraction: return Icons.camera_alt_outlined;
-    case ListingCategory.other:             return Icons.place_outlined;
+    case ListingCategory.cafe:
+      return Icons.coffee_outlined;
+    case ListingCategory.hospital:
+      return Icons.local_hospital_outlined;
+    case ListingCategory.pharmacy:
+      return Icons.medication_outlined;
+    case ListingCategory.policeStation:
+      return Icons.local_police_outlined;
+    case ListingCategory.park:
+      return Icons.park_outlined;
+    case ListingCategory.library:
+      return Icons.local_library_outlined;
+    case ListingCategory.restaurant:
+      return Icons.restaurant_outlined;
+    case ListingCategory.touristAttraction:
+      return Icons.camera_alt_outlined;
+    case ListingCategory.other:
+      return Icons.place_outlined;
   }
 }
 
@@ -369,30 +393,34 @@ class _ReviewTile extends StatelessWidget {
         Row(children: [
           CircleAvatar(
             radius: 18,
-            backgroundColor: AppColors.primary.withOpacity(0.12),
+            backgroundColor: AppColors.primary.withValues(alpha: 0.12),
             child: Text(
               review.userEmail.isNotEmpty
-                  ? review.userEmail[0].toUpperCase() : '?',
+                  ? review.userEmail[0].toUpperCase()
+                  : '?',
               style: const TextStyle(
                   color: AppColors.primary, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(width: 10),
-          Expanded(child: Column(
+          Expanded(
+              child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(review.userEmail,
                   style: AppTextStyles.titleSmall.copyWith(fontSize: 13),
-                  maxLines: 1, overflow: TextOverflow.ellipsis),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis),
               Text(DateFormat('dd MMM yyyy').format(review.timestamp),
                   style: AppTextStyles.caption),
             ],
           )),
           RatingBarIndicator(
             rating: review.rating,
-            itemCount: 5, itemSize: 14,
-            itemBuilder: (_, __) => const Icon(
-                Icons.star_rounded, color: AppColors.starFilled),
+            itemCount: 5,
+            itemSize: 14,
+            itemBuilder: (_, __) =>
+                const Icon(Icons.star_rounded, color: AppColors.starFilled),
           ),
         ]),
         if (review.comment.isNotEmpty) ...[

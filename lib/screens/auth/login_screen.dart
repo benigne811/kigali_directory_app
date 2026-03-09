@@ -105,14 +105,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         Text('Kigali City',
                             style: AppTextStyles.titleLarge
                                 .copyWith(color: AppColors.primary)),
-                        Text('Services Directory',
+                        const Text('Services Directory',
                             style: AppTextStyles.caption),
                       ]),
                 ]),
                 const SizedBox(height: 52),
-                Text('Welcome back', style: AppTextStyles.displayLarge),
+                const Text('Welcome back', style: AppTextStyles.displayLarge),
                 const SizedBox(height: 8),
-                Text('Sign in to find services near you',
+                const Text('Sign in to find services near you',
                     style: AppTextStyles.bodyMedium),
                 const SizedBox(height: 36),
                 AppTextField(
@@ -122,8 +122,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty)
+                    if (v == null || v.trim().isEmpty) {
                       return 'Email is required';
+                    }
                     if (!v.contains('@')) return 'Enter a valid email';
                     return null;
                   },
@@ -158,7 +159,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text("Don't have an account? ",
+                  const Text("Don't have an account? ",
                       style: AppTextStyles.bodyMedium),
                   TextButton(
                     onPressed: () => context.go('/register'),

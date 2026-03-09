@@ -36,13 +36,13 @@ class MyListingsScreen extends ConsumerWidget {
                 children: [
                   Icon(Icons.add_business_outlined,
                       size: 80,
-                      color: AppColors.primary.withOpacity(0.3)),
+                      color: AppColors.primary.withValues(alpha: 0.3)),
                   const SizedBox(height: 16),
                   Text('No listings yet',
                       style: AppTextStyles.titleLarge
                           .copyWith(color: AppColors.textSecondary)),
                   const SizedBox(height: 8),
-                  Text('Tap + to add your first place',
+                  const Text('Tap + to add your first place',
                       style: AppTextStyles.bodyMedium),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(

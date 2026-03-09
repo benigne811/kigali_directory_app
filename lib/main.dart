@@ -8,7 +8,6 @@ import 'package:go_router/go_router.dart';
 
 import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
-import 'services/auth_service.dart';
 import 'utils/app_theme.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';

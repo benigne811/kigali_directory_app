@@ -94,9 +94,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   padding: EdgeInsets.zero,
                 ),
                 const SizedBox(height: 24),
-                Text('Create account', style: AppTextStyles.displayLarge),
+                const Text('Create account', style: AppTextStyles.displayLarge),
                 const SizedBox(height: 8),
-                Text('Join Kigali City Directory',
+                const Text('Join Kigali City Directory',
                     style: AppTextStyles.bodyMedium),
                 const SizedBox(height: 36),
                 AppTextField(
@@ -106,8 +106,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty)
+                    if (v == null || v.trim().isEmpty) {
                       return 'Email is required';
+                    }
                     if (!v.contains('@')) return 'Enter a valid email';
                     return null;
                   },
@@ -163,7 +164,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
                 const SizedBox(height: 24),
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text('Already have an account? ',
+                  const Text('Already have an account? ',
                       style: AppTextStyles.bodyMedium),
                   TextButton(
                     onPressed: () => context.go('/login'),

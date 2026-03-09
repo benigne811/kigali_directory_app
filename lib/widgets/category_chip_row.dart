@@ -50,7 +50,7 @@ class CategoryChipRow extends StatelessWidget {
             color: isActive ? AppColors.primary : AppColors.divider,
             width: 1.5,
           ),
-          boxShadow: isActive ? [BoxShadow(color: AppColors.primary.withOpacity(0.25), blurRadius: 6, offset: const Offset(0, 2))] : [],
+          boxShadow: isActive ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.25), blurRadius: 6, offset: const Offset(0, 2))] : [],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

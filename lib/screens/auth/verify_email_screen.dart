@@ -4,7 +4,6 @@
 // User just taps "Confirm Email Verified" and enters the app.
 
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
@@ -31,7 +30,7 @@ class VerifyEmailScreen extends ConsumerWidget {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.mark_email_read_outlined,
@@ -39,7 +38,7 @@ class VerifyEmailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
 
-              Text('Verify Your Email',
+              const Text('Verify Your Email',
                   style: AppTextStyles.displayMedium,
                   textAlign: TextAlign.center),
               const SizedBox(height: 16),
@@ -49,7 +48,7 @@ class VerifyEmailScreen extends ConsumerWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.08),
+                  color: AppColors.primary.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(email,
@@ -59,7 +58,7 @@ class VerifyEmailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
 
-              Text(
+              const Text(
                 'A verification link has been sent to the email above.\n\n'
                 'Please verify your email then tap the button below to continue.',
                 style: AppTextStyles.bodyMedium,

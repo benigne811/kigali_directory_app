@@ -36,7 +36,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       _ref.read(needsVerificationProvider.notifier).state = true;
-      final userModel = await _svc.signUp(email: email, password: password);
+      await _svc.signUp(email: email, password: password);
       // Wait for user to verify email
       state = const AsyncValue.data(null);
     } catch (e, st) {
