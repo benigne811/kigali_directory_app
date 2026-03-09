@@ -3,81 +3,73 @@
 ## Overview
 
 The Kigali Directory App is a mobile application developed using **Flutter** and **Firebase**.  
-The purpose of the application is to allow users to discover, manage, and explore local listings such as businesses, services, or places in Kigali.
+The application allows users to discover and manage listings such as businesses, services, or places in Kigali.
 
-The app allows authenticated users to create, view, edit, and delete listings while also displaying locations on an embedded map.
+Users can browse listings, create their own listings, view locations on a map, and manage their account.
 
 ---
 
 # Features
 
 ## 1. User Authentication
-The application uses Firebase Authentication to manage user accounts.
+The app uses Firebase Authentication to manage users.
 
 Users can:
-- Register with an email and password
+- Register with email and password
 - Log in with existing credentials
 - Log out of the application
-- Simulate email verification during account creation
-
-Authentication ensures that only logged-in users can access the main features of the application.
+- Simulate email verification during signup
 
 ---
 
 ## 2. Directory / Browse Listings
-The directory screen displays all available listings stored in the Firestore database.
+Users can browse all available listings stored in Firestore.
 
-Users can:
-- View a list of available listings
-- Open a listing to view its details
-- Search listings by name
-- Filter listings by category
+Features include:
+- Viewing available listings
+- Searching listings by name
+- Filtering listings by category
+- Opening listings to see detailed information
 
 ---
 
 ## 3. My Listings
-Authenticated users can manage their own listings.
+Users can manage listings they created.
 
 Users can:
 - Create new listings
 - Edit existing listings
 - Delete listings
-- View only listings created by their account
+- View only listings created by them
 
 ---
 
 ## 4. Map View
-The application integrates **Google Maps** to display listing locations.
+The application integrates Google Maps to display listing locations.
 
 Users can:
-- View the location of a listing on a map
-- Launch navigation directions to the location
+- View listing locations on the map
+- Navigate to the location
 
 ---
 
 ## 5. Listing Details
-Each listing contains detailed information including:
+Each listing includes:
 
 - Title
 - Description
 - Category
-- Location
-- Owner information
-
-Users can open a listing to see the full details and map location.
+- Location (latitude and longitude)
+- Creator information
 
 ---
 
 ## 6. Settings Screen
-The settings screen displays user account information and app preferences.
+The settings screen includes:
 
-It includes:
-
-- Authenticated user email
+- User account information
 - Logout functionality
-- Location-based notification toggle (simulated locally)
-
-The notification toggle allows the user to enable or disable location-based alerts.
+- Notification toggle for location alerts
 
 ---
 
@@ -90,21 +82,17 @@ The application uses a **Bottom Navigation Bar** with the following sections:
 3. Map View
 4. Settings
 
-This allows easy navigation between the core features of the app.
-
 ---
 
 # Firestore Database Structure
 
-The application stores its data using **Cloud Firestore**.
+The application uses **Cloud Firestore** to store its data.
 
-## Collections
+## users Collection
 
-### users
+Stores user account information.
 
-Stores information about authenticated users.
-
-Example document structure:
+Example document:
 
 ```
 users
@@ -115,11 +103,11 @@ users
 
 ---
 
-### listings
+## listings Collection
 
-Stores all listings created by users.
+Stores listings created by users.
 
-Example structure:
+Example document:
 
 ```
 listings
@@ -133,49 +121,45 @@ listings
         ├── createdAt: timestamp
 ```
 
-Each listing is associated with the user who created it through the `createdBy` field.
+Each listing is linked to the user who created it through the `createdBy` field.
 
 ---
 
-# State Management Approach
+# State Management
 
-The application uses **Provider-based state management** to handle application state and data flow.
+The application uses **Provider** for state management.
 
-## Providers Used
+## AuthProvider
 
-### AuthProvider
+Handles authentication state and communicates with Firebase Authentication.
 
-Manages authentication state and communicates with Firebase Authentication.
-
-Responsibilities include:
+Responsibilities:
 - User login
 - User registration
 - User logout
-- Managing the authenticated user state
+- Managing authentication state
 
 ---
 
-### ListingProvider
+## ListingProvider
 
-Handles all listing-related operations and communicates with Firestore.
+Handles listing operations and Firestore communication.
 
-Responsibilities include:
-- Fetching listings
-- Creating listings
-- Updating listings
-- Deleting listings
-- Managing listing data in the UI
+Responsibilities:
+- Fetch listings
+- Create listings
+- Update listings
+- Delete listings
+- Manage listing state in the UI
 
 ---
 
-# Service Layer
-
-The project follows a layered architecture.
+# Services
 
 ## AuthService
+Handles Firebase Authentication logic.
 
-Handles Firebase Authentication operations such as:
-
+Functions include:
 - Sign up
 - Sign in
 - Sign out
@@ -183,19 +167,17 @@ Handles Firebase Authentication operations such as:
 ---
 
 ## ListingService
+Handles Firestore operations for listings.
 
-Handles all interactions with Firestore including:
-
-- Reading listings
-- Writing listings
-- Updating listings
-- Deleting listings
+Functions include:
+- Read listings
+- Write listings
+- Update listings
+- Delete listings
 
 ---
 
-# Project Architecture
-
-The application follows a modular folder structure:
+# Project Structure
 
 ```
 lib/
@@ -211,7 +193,7 @@ lib/
 └── main_shell.dart
 ```
 
-This structure separates responsibilities and keeps the project organized.
+This modular structure helps separate concerns and keep the project organized.
 
 ---
 
@@ -221,12 +203,76 @@ This structure separates responsibilities and keeps the project organized.
 - Firebase Authentication
 - Cloud Firestore
 - Google Maps Flutter
-- Provider (state management)
+- Provider (State Management)
+
+---
+
+# How to Access the Project
+
+1. Clone the repository:
+
+```
+git clone https://github.com/your-username/kigali-directory-app.git
+```
+
+2. Navigate to the project folder:
+
+```
+cd kigali-directory-app
+```
+
+3. Install dependencies:
+
+```
+flutter pub get
+```
+
+---
+
+# How to Run the Application
+
+### Requirements
+
+Make sure the following are installed:
+
+- Flutter SDK
+- Android Studio or VS Code
+- Android Emulator or Physical Device
+- Firebase project configuration
+
+---
+
+### Steps to Run
+
+1. Start an Android emulator or connect a physical Android device.
+
+2. Run the following command in the project folder:
+
+```
+flutter run
+```
+
+3. The application will build and launch on the emulator or device.
+
+---
+
+# Firebase Configuration
+
+The app requires a Firebase project configured with:
+
+- Firebase Authentication (Email/Password)
+- Cloud Firestore database
+
+You must also include the Firebase configuration file:
+
+```
+android/app/google-services.json
+```
 
 ---
 
 # Conclusion
 
-The Kigali Directory App demonstrates how Flutter can be integrated with Firebase to build a fully functional mobile application that supports authentication, real-time database operations, and location-based services.
+The Kigali Directory App demonstrates how Flutter and Firebase can be used together to build a mobile application with authentication, cloud database storage, and map-based features.
 
-The project focuses on clean architecture, modular design, and scalable state management.
+The project follows a modular architecture and uses Provider for scalable state management.
